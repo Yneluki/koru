@@ -5,6 +5,7 @@
 # Koru
 
 Koru is an API to manage long-term shared expenses.
+The frontend mobile application can be found at [koru_app](https://github.com/Yneluki/koru_app)
 
 ## Development
 
