@@ -1,0 +1,1525 @@
+{
+  "db": "PostgreSQL",
+  "03b8f7b7c83cb4dbc6a2a744856eb016ae6934ed296a5686138cc7f138c81143": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "group_id",
+          "ordinal": 1,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "end_date",
+          "ordinal": 2,
+          "type_info": "Timestamptz"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": []
+      }
+    },
+    "query": "\n        SELECT id, group_id, end_date FROM koru_settlement\n        "
+  },
+  "073c660f3a83d2f37909397133d998a0877c4822bb6f2c0422d7a2a7f06961e3": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "group_id",
+          "ordinal": 1,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "member_id",
+          "ordinal": 2,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "description",
+          "ordinal": 3,
+          "type_info": "Text"
+        },
+        {
+          "name": "amount",
+          "ordinal": 4,
+          "type_info": "Float4"
+        },
+        {
+          "name": "created_at",
+          "ordinal": 5,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "modified_at",
+          "ordinal": 6,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "settled",
+          "ordinal": 7,
+          "type_info": "Bool"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      }
+    },
+    "query": "\n            SELECT id, group_id, member_id, description, amount, created_at, modified_at, settled\n                FROM koru_expense\n                WHERE group_id= $1 AND settled = false\n            "
+  },
+  "108a339a8040e9188358bdc278a713dc90fd51dc0a1f05e5d3b12984dab625ca": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "email",
+          "ordinal": 1,
+          "type_info": "Text"
+        },
+        {
+          "name": "name",
+          "ordinal": 2,
+          "type_info": "Text"
+        },
+        {
+          "name": "created_at",
+          "ordinal": 3,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "role: PgUserRole",
+          "ordinal": 4,
+          "type_info": {
+            "Custom": {
+              "kind": {
+                "Enum": [
+                  "admin",
+                  "user"
+                ]
+              },
+              "name": "role"
+            }
+          }
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      }
+    },
+    "query": "\n        SELECT id, email, name, created_at, role as \"role: PgUserRole\"\n        FROM koru_user JOIN koru_user_roles ON user_id = id WHERE id = $1\n        "
+  },
+  "15978556a12da0427c539bc2772472cde32aedbe747ca978faa96479cf9a476f": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      }
+    },
+    "query": "\n        UPDATE koru_user_roles SET role = 'admin' WHERE user_id = $1\n        "
+  },
+  "1a6034cfd4ccc0a94bbbc92440913116236ba4b219f024e2c4167b4ae7d071d5": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "name",
+          "ordinal": 1,
+          "type_info": "Text"
+        },
+        {
+          "name": "admin_id",
+          "ordinal": 2,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "created_at",
+          "ordinal": 3,
+          "type_info": "Timestamptz"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      }
+    },
+    "query": "\n        SELECT id, name, admin_id, created_at FROM koru_group WHERE id = $1\n        "
+  },
+  "1b1fc0b5eebfb9be0bbc1e825853bca7d5108ae394ad3ed1a0184affc9fd0438": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": [
+          "Uuid",
+          "Text",
+          "Text",
+          "Timestamptz"
+        ]
+      }
+    },
+    "query": "\n        INSERT INTO koru_user (id, email, name, created_at) VALUES ($1, $2, $3, $4)\n        "
+  },
+  "22f3f3f870ff6914282b862eb7520ce7c564574ddfa0863b218fe613aee1c05d": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "group_id",
+          "ordinal": 1,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "start_date",
+          "ordinal": 2,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "end_date",
+          "ordinal": 3,
+          "type_info": "Timestamptz"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        true,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      }
+    },
+    "query": "\n        SELECT id, group_id, start_date, end_date FROM koru_settlement WHERE group_id = $1 ORDER BY end_date ASC;\n        "
+  },
+  "284c203c69e0a5b3d46123887c7538a3a018c5fece23e7584b5252075b715946": {
+    "describe": {
+      "columns": [
+        {
+          "name": "user_id!",
+          "ordinal": 0,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "group_id",
+          "ordinal": 1,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "joined_at",
+          "ordinal": 2,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "color",
+          "ordinal": 3,
+          "type_info": "Text"
+        },
+        {
+          "name": "name",
+          "ordinal": 4,
+          "type_info": "Text"
+        },
+        {
+          "name": "email",
+          "ordinal": 5,
+          "type_info": "Text"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      }
+    },
+    "query": "\n        SELECT user_id as \"user_id!\", group_id, joined_at, color, name, email\n        FROM koru_group_members LEFT JOIN koru_user ON user_id = koru_user.id\n        WHERE group_id = $1\n        "
+  },
+  "2ca381d4d32e7a8bf4498c2b679a1bae56a38d3bca0242da3d48173e577227d7": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "group_id",
+          "ordinal": 1,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "start_date",
+          "ordinal": 2,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "end_date",
+          "ordinal": 3,
+          "type_info": "Timestamptz"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        true,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      }
+    },
+    "query": "\n        SELECT id, group_id, start_date, end_date FROM koru_settlement WHERE id = $1;\n        "
+  },
+  "345c97c62934d89e684908d24acd041b5459c8e277f66191018130d0887687aa": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": []
+      }
+    },
+    "query": "ALTER TABLE koru_user DROP COLUMN email;"
+  },
+  "380ad382d4670620aef07e9bbf9e49478c97cb3354a6a1c3a6f59a46393052bf": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": [
+          "Uuid",
+          "Text"
+        ]
+      }
+    },
+    "query": "\n        INSERT INTO koru_user_device (user_id, device) VALUES ($1, $2)\n        "
+  },
+  "39c65b69926b6ff0a84abd52ecfd517e6dcdcdb25dfaad7f553ae9dac670cb17": {
+    "describe": {
+      "columns": [
+        {
+          "name": "process_date",
+          "ordinal": 0,
+          "type_info": "Timestamptz"
+        }
+      ],
+      "nullable": [
+        true
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      }
+    },
+    "query": "\n        SELECT process_date FROM koru_event WHERE id = $1\n        "
+  },
+  "3ccabc2d04c28886f35a595309daf7da2f8fb5c96fdaff20c70e07033d26ba7b": {
+    "describe": {
+      "columns": [
+        {
+          "name": "settlement_id",
+          "ordinal": 0,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "expense_id",
+          "ordinal": 1,
+          "type_info": "Uuid"
+        }
+      ],
+      "nullable": [
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      }
+    },
+    "query": "\n        SELECT settlement_id, expense_id\n        FROM koru_settlement_expenses\n        WHERE settlement_id = $1\n        "
+  },
+  "465fcb3f4265db2c2451ab771f5d079d9458011964d614fa8326dfb19088efc4": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": [
+          "Uuid",
+          "Text"
+        ]
+      }
+    },
+    "query": "\n        INSERT INTO koru_user_device (user_id, device) VALUES ($1, $2)\n        ON CONFLICT (user_id) DO UPDATE SET\n            device = EXCLUDED.device;\n        "
+  },
+  "4a0941a5fe78944725b8a09b01acfa2b13a214826ed732f5292aeb207b42f95a": {
+    "describe": {
+      "columns": [
+        {
+          "name": "event_data",
+          "ordinal": 0,
+          "type_info": "Json"
+        }
+      ],
+      "nullable": [
+        false
+      ],
+      "parameters": {
+        "Left": []
+      }
+    },
+    "query": "\n        SELECT event_data FROM koru_event ORDER BY event_date DESC\n        "
+  },
+  "511360ba61180e90537c11f0c054c075e3bea8ee5131651ba44f6e063629bf6b": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": []
+      }
+    },
+    "query": "ALTER TABLE koru_group DROP COLUMN name;"
+  },
+  "57d5553e2b57be1e67504e83d1a8a6f1c41926caba6992fcf392f3449b0246a6": {
+    "describe": {
+      "columns": [
+        {
+          "name": "settlement_id",
+          "ordinal": 0,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "from_user_id",
+          "ordinal": 1,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "to_user_id",
+          "ordinal": 2,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "amount",
+          "ordinal": 3,
+          "type_info": "Float4"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": []
+      }
+    },
+    "query": "\n        SELECT settlement_id, from_user_id, to_user_id, amount\n        FROM koru_transaction\n        ORDER BY amount ASC\n        "
+  },
+  "58cdd6a38c16363d292e90ecefff8bd2487ae05933f2132fd187226a9b0d0f05": {
+    "describe": {
+      "columns": [
+        {
+          "name": "group_id",
+          "ordinal": 0,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "user_id",
+          "ordinal": 1,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "color",
+          "ordinal": 2,
+          "type_info": "Text"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      }
+    },
+    "query": "\n        SELECT group_id, user_id, color FROM koru_group_members WHERE user_id = $1\n        "
+  },
+  "5c95f9204dda9712a102d62c41e24c7f262d0d83c096927bab2a8f26cdc3e8f2": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "email",
+          "ordinal": 1,
+          "type_info": "Text"
+        },
+        {
+          "name": "name",
+          "ordinal": 2,
+          "type_info": "Text"
+        },
+        {
+          "name": "created_at",
+          "ordinal": 3,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "role: PgUserRole",
+          "ordinal": 4,
+          "type_info": {
+            "Custom": {
+              "kind": {
+                "Enum": [
+                  "admin",
+                  "user"
+                ]
+              },
+              "name": "role"
+            }
+          }
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": []
+      }
+    },
+    "query": "\n        SELECT id, email, name, created_at, role as \"role: PgUserRole\" FROM koru_user\n        JOIN koru_user_roles ON user_id = id\n        "
+  },
+  "5e1e4bffd87b4f65c968ec3275ac053233489ed625115ddabd4fa3d59f469c9f": {
+    "describe": {
+      "columns": [
+        {
+          "name": "admin_id",
+          "ordinal": 0,
+          "type_info": "Uuid"
+        }
+      ],
+      "nullable": [
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      }
+    },
+    "query": "SELECT admin_id FROM koru_group WHERE id= $1"
+  },
+  "65c51a565f5b689de1b67b076a406be6211bce7621a7199cc43f95d650509577": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "group_id",
+          "ordinal": 1,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "member_id",
+          "ordinal": 2,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "description",
+          "ordinal": 3,
+          "type_info": "Text"
+        },
+        {
+          "name": "amount",
+          "ordinal": 4,
+          "type_info": "Float4"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": []
+      }
+    },
+    "query": "\n        SELECT id, group_id, member_id, description, amount FROM koru_expense\n        "
+  },
+  "6e84583468eb3306027cf512e24b24c061947141d96082130c251ea4d4856b00": {
+    "describe": {
+      "columns": [
+        {
+          "name": "device",
+          "ordinal": 0,
+          "type_info": "Text"
+        }
+      ],
+      "nullable": [
+        true
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      }
+    },
+    "query": "\n        SELECT device FROM koru_user_device WHERE user_id = $1\n        "
+  },
+  "6eaed6cac5f9cdfa68af1726ae89be070930cd69e5739ac9de61f003432f73b9": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      }
+    },
+    "query": "\n        DELETE FROM koru_expense WHERE id = $1\n        "
+  },
+  "7278d380b21a29f1f1e875289853862a2c71e2d17a6f13680e1014e4e713972f": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": [
+          "Uuid",
+          "Uuid",
+          "Uuid",
+          "Text",
+          "Float4",
+          "Timestamptz",
+          "Timestamptz",
+          "Bool"
+        ]
+      }
+    },
+    "query": "\n        INSERT INTO koru_expense (id, group_id, member_id, description, amount, created_at, modified_at, settled)\n        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)\n        ON CONFLICT (id) DO UPDATE SET \n            description = EXCLUDED.description, \n            amount = EXCLUDED.amount, \n            modified_at = EXCLUDED.modified_at, \n            settled = EXCLUDED.settled;\n        "
+  },
+  "733d68927ad5b7becf6cf6bbd1d8b32ed370e2273dfe2e875570edf8fb594210": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "name",
+          "ordinal": 1,
+          "type_info": "Text"
+        },
+        {
+          "name": "admin_id",
+          "ordinal": 2,
+          "type_info": "Uuid"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      }
+    },
+    "query": "\n        SELECT id, name, admin_id FROM koru_group WHERE id = $1\n        "
+  },
+  "74475c5adae0b794b13f8bb6cf32b71f7b199e3b841c9920358395988d42689e": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "email",
+          "ordinal": 1,
+          "type_info": "Text"
+        },
+        {
+          "name": "name",
+          "ordinal": 2,
+          "type_info": "Text"
+        },
+        {
+          "name": "created_at",
+          "ordinal": 3,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "role: PgUserRole",
+          "ordinal": 4,
+          "type_info": {
+            "Custom": {
+              "kind": {
+                "Enum": [
+                  "admin",
+                  "user"
+                ]
+              },
+              "name": "role"
+            }
+          }
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Text"
+        ]
+      }
+    },
+    "query": "\n        SELECT id, email, name, created_at, role as \"role: PgUserRole\" FROM koru_user\n        JOIN koru_user_roles ON user_id = id WHERE email = $1\n        "
+  },
+  "7687a98aedeb5eac9b068c30f44378d04496ccf43ad291e3279f654dc12b64e1": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": [
+          "Uuid",
+          {
+            "Custom": {
+              "kind": {
+                "Enum": [
+                  "admin",
+                  "user"
+                ]
+              },
+              "name": "role"
+            }
+          }
+        ]
+      }
+    },
+    "query": "\n        INSERT INTO koru_user_roles (user_id, role) VALUES ($1, $2)\n        "
+  },
+  "78a125ea9ae7e961e41de96b585e0a8b94e1df41eddd4b0d8230e624d7fba287": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id!",
+          "ordinal": 0,
+          "type_info": "Uuid"
+        }
+      ],
+      "nullable": [
+        false
+      ],
+      "parameters": {
+        "Left": []
+      }
+    },
+    "query": "\n        SELECT id as \"id!\" FROM koru_group\n        "
+  },
+  "7c40c31d728ccb6be9104f6b7970d4bd8f82cc700867b3c1a471bc76775a16d9": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      }
+    },
+    "query": "\n        DELETE FROM koru_group WHERE id = $1\n        "
+  },
+  "7e4f14c095bfea0d25175b9d5c27de31f131f2d6a32399bd3ddb8e4d407f9f1a": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": [
+          "Uuid",
+          "Uuid",
+          "Timestamptz",
+          "Timestamptz"
+        ]
+      }
+    },
+    "query": "\n        INSERT INTO koru_settlement (id, group_id, start_date, end_date) VALUES ($1, $2, $3, $4)\n        "
+  },
+  "7fa58a7efbe7e3c003982d05972c26ae9060e6d45799e7d186caca0a7e2e4b78": {
+    "describe": {
+      "columns": [
+        {
+          "name": "settlement_id",
+          "ordinal": 0,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "expense_id",
+          "ordinal": 1,
+          "type_info": "Uuid"
+        }
+      ],
+      "nullable": [
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": []
+      }
+    },
+    "query": "\n        SELECT settlement_id, expense_id\n        FROM koru_settlement_expenses\n        "
+  },
+  "8b693cd76d22ff1d1904a7398e71bd301edffb10970c997537d1b0e29ae4a8cd": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id!",
+          "ordinal": 0,
+          "type_info": "Uuid"
+        }
+      ],
+      "nullable": [
+        null
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      }
+    },
+    "query": "\n        SELECT id as \"id!\" FROM koru_group WHERE admin_id = $1\n        UNION\n        SELECT group_id as \"id!\" FROM koru_group_members WHERE user_id = $1\n        "
+  },
+  "8f4db74b481c8b8152eedb8dc76a79680c8a0b12df92671285b36f69a1ab9877": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Uuid"
+        }
+      ],
+      "nullable": [
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      }
+    },
+    "query": "\n        SELECT id FROM koru_settlement WHERE id = $1\n        "
+  },
+  "9a863d49dcb99a71da7eca2549551f09992c0f86023bdd2a3cf641d8ab3e4e6b": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": []
+      }
+    },
+    "query": "ALTER TABLE koru_user_credentials DROP COLUMN email;"
+  },
+  "9a8e422914db679ae835a76f3b5d50b4d600a615aba4f212effd63dbdbeb747f": {
+    "describe": {
+      "columns": [
+        {
+          "name": "name",
+          "ordinal": 0,
+          "type_info": "Text"
+        },
+        {
+          "name": "email",
+          "ordinal": 1,
+          "type_info": "Text"
+        },
+        {
+          "name": "password",
+          "ordinal": 2,
+          "type_info": "Text"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": []
+      }
+    },
+    "query": "\n        SELECT name, koru_user.email, koru_user_credentials.password FROM koru_user JOIN koru_user_credentials ON koru_user.email = koru_user_credentials.email\n        "
+  },
+  "9b42991c945ded519e3da52a2a245d2de36f6e1406d12af5766597eb7210cb99": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      }
+    },
+    "query": "DELETE FROM koru_group WHERE id= $1"
+  },
+  "9c61174d334b4707477d78c0d320bcdbae7a5ec64530c914177044780f6a56e6": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": [
+          "Uuid",
+          "Uuid",
+          "Timestamptz",
+          "Text"
+        ]
+      }
+    },
+    "query": "\n        INSERT INTO koru_group_members (group_id, user_id, joined_at, color) VALUES ($1, $2, $3, $4)\n        "
+  },
+  "9ca5f072ee34430b32492dd424f3e22ccd9ebb83b587ef50fe1c46f3e9615d47": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": [
+          "Uuid",
+          "Text",
+          "Uuid",
+          "Timestamptz"
+        ]
+      }
+    },
+    "query": "\n        INSERT INTO koru_group (id, name, admin_id, created_at) VALUES ($1, $2, $3, $4)\n        ON CONFLICT DO NOTHING\n        "
+  },
+  "9fff06475c6d30616f5f7a019c81ccc38250eb3f335cf5ba01775192268903e7": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "settled",
+          "ordinal": 1,
+          "type_info": "Bool"
+        }
+      ],
+      "nullable": [
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "UuidArray"
+        ]
+      }
+    },
+    "query": "\n        SELECT id, settled\n        FROM koru_expense WHERE id = ANY($1)\n        "
+  },
+  "a0f5f92640e922ed123872996d35440128455f6de43151eac314d9a0593e8393": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": [
+          "Uuid",
+          "Uuid",
+          "Uuid",
+          "Text",
+          "Float4",
+          "Timestamptz",
+          "Timestamptz",
+          "Bool"
+        ]
+      }
+    },
+    "query": "\n        INSERT INTO koru_expense (id, group_id, member_id, description, amount, created_at, modified_at, settled)\n        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)\n        "
+  },
+  "a2406b893fe61b86c239c4a63d9c432b440c5a17e33424d8d6785e3fcfbf7367": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": [
+          "Uuid",
+          "Uuid",
+          "Timestamptz",
+          "Text"
+        ]
+      }
+    },
+    "query": "\n        INSERT INTO koru_group_members (group_id, user_id, joined_at, color) VALUES ($1, $2, $3, $4)\n        ON CONFLICT (group_id, user_id) DO UPDATE SET\n            color = EXCLUDED.color;\n        "
+  },
+  "a5918aca2acbf97dd74246d92464247e4e09393778f67d2e9ab712fa3b05d5a4": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Uuid"
+        }
+      ],
+      "nullable": [
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Text"
+        ]
+      }
+    },
+    "query": "\n        SELECT id FROM koru_user WHERE email = $1\n        "
+  },
+  "b0f7394e75c4a03bcc7da8f8b4a0cf6e4c6025f44e4d59d9004a9adb5f13766c": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Uuid"
+        }
+      ],
+      "nullable": [
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      }
+    },
+    "query": "\n        SELECT id FROM koru_expense WHERE group_id = $1 and settled = false\n        "
+  },
+  "b750e9aa96521a7e9deef6d65a92790086a1c0775a0397d2944e94114087edcb": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      }
+    },
+    "query": "\n        DELETE FROM koru_user_device WHERE user_id = $1\n        "
+  },
+  "bd98c6620f84eccc4da5e13087a67a0915b4810104ec4f6a2358af4caca71edb": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "event_date",
+          "ordinal": 1,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "event_data",
+          "ordinal": 2,
+          "type_info": "Json"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      }
+    },
+    "query": "\n            SELECT id, event_date, event_data\n                FROM koru_event\n                WHERE id = $1\n            "
+  },
+  "c094624b126ac288cc7478e5626b82c0c931007d09d5419ab92821f172507a2d": {
+    "describe": {
+      "columns": [
+        {
+          "name": "user_id",
+          "ordinal": 0,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "device",
+          "ordinal": 1,
+          "type_info": "Text"
+        }
+      ],
+      "nullable": [
+        false,
+        true
+      ],
+      "parameters": {
+        "Left": []
+      }
+    },
+    "query": "\n        SELECT user_id, device FROM koru_user_device\n        "
+  },
+  "c199206c296b3ede9babab1af7d3b409929bc1f38d7bf1a77611bb4e7f3edd44": {
+    "describe": {
+      "columns": [
+        {
+          "name": "email",
+          "ordinal": 0,
+          "type_info": "Text"
+        },
+        {
+          "name": "password",
+          "ordinal": 1,
+          "type_info": "Text"
+        }
+      ],
+      "nullable": [
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Text"
+        ]
+      }
+    },
+    "query": "\n        SELECT email, password FROM koru_user_credentials WHERE email = $1\n        "
+  },
+  "cc18add2378482062935b12636dc2b600b5b7f3d5bc3c31c0c72212397c7dead": {
+    "describe": {
+      "columns": [
+        {
+          "name": "settlement_id",
+          "ordinal": 0,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "from_user_id",
+          "ordinal": 1,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "to_user_id",
+          "ordinal": 2,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "amount",
+          "ordinal": 3,
+          "type_info": "Float4"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      }
+    },
+    "query": "\n        SELECT settlement_id, from_user_id, to_user_id, amount\n        FROM koru_transaction\n        WHERE settlement_id = $1\n        ORDER BY amount DESC;\n        "
+  },
+  "d3077fd3e0d9657fda47f063569f8a79f0e3e5e6af675a8f79ee2c7b6ea48420": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "group_id",
+          "ordinal": 1,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "member_id",
+          "ordinal": 2,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "description",
+          "ordinal": 3,
+          "type_info": "Text"
+        },
+        {
+          "name": "amount",
+          "ordinal": 4,
+          "type_info": "Float4"
+        },
+        {
+          "name": "created_at",
+          "ordinal": 5,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "modified_at",
+          "ordinal": 6,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "settled",
+          "ordinal": 7,
+          "type_info": "Bool"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      }
+    },
+    "query": "\n        SELECT id, group_id, member_id, description, amount, created_at, modified_at, settled\n        FROM koru_expense WHERE id = $1\n        "
+  },
+  "d7c960a23a7fa2a2ebcf3f7ac1b5f664765760032543157d64cf60598ee7846e": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      }
+    },
+    "query": "DELETE FROM koru_user WHERE id = $1;"
+  },
+  "e39ed167146f41b7309ad162e9b436629bc0c2a3da12f296c56455506bb0fd9a": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": [
+          "Text",
+          "Text"
+        ]
+      }
+    },
+    "query": "\n        INSERT INTO koru_user_credentials (email, password) VALUES ($1, $2)\n        "
+  },
+  "e3cda2179a2fbc3f2d6a838734725948be80cd506860a31b2a8500f0a9d5efa1": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Uuid"
+        }
+      ],
+      "nullable": [
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      }
+    },
+    "query": "\n        SELECT id FROM koru_settlement WHERE group_id = $1\n        "
+  },
+  "e59f9b71b42886175b78bcbe86b65bc631924217e05a0c935deb16d1f52f255a": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "group_id",
+          "ordinal": 1,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "member_id",
+          "ordinal": 2,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "description",
+          "ordinal": 3,
+          "type_info": "Text"
+        },
+        {
+          "name": "amount",
+          "ordinal": 4,
+          "type_info": "Float4"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      }
+    },
+    "query": "\n        SELECT id, group_id, member_id, description, amount FROM koru_expense where id = $1\n        "
+  },
+  "e80d9ab46f05c937323e0587e719399200e7785f3f9b124de07094cefd2dcc7e": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": [
+          "Timestamptz",
+          "Uuid"
+        ]
+      }
+    },
+    "query": "UPDATE koru_event SET process_date = $1 WHERE id= $2"
+  },
+  "eba61dce5afd438d6b787770ccb70fc921c0893b93ee7e1daad78e4680fcecf0": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "email",
+          "ordinal": 1,
+          "type_info": "Text"
+        },
+        {
+          "name": "name",
+          "ordinal": 2,
+          "type_info": "Text"
+        },
+        {
+          "name": "created_at",
+          "ordinal": 3,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "role: PgUserRole",
+          "ordinal": 4,
+          "type_info": {
+            "Custom": {
+              "kind": {
+                "Enum": [
+                  "admin",
+                  "user"
+                ]
+              },
+              "name": "role"
+            }
+          }
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "UuidArray"
+        ]
+      }
+    },
+    "query": "\n        SELECT id, email, name, created_at, role as \"role: PgUserRole\" FROM koru_user\n        JOIN koru_user_roles ON user_id = id WHERE id = ANY($1)\n        "
+  },
+  "ebcf298f72cd45acd81ad702ba84cee94d3affdbec26049f30028f972c7b38ae": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "name",
+          "ordinal": 1,
+          "type_info": "Text"
+        },
+        {
+          "name": "admin_id",
+          "ordinal": 2,
+          "type_info": "Uuid"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": []
+      }
+    },
+    "query": "\n        SELECT id, name, admin_id FROM koru_group\n        "
+  },
+  "f7fc2ba54cb7ae9ca135bf5a92a0919f42d994907c9443822d43a81ac8f4bcfe": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "group_id",
+          "ordinal": 1,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "member_id",
+          "ordinal": 2,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "description",
+          "ordinal": 3,
+          "type_info": "Text"
+        },
+        {
+          "name": "amount",
+          "ordinal": 4,
+          "type_info": "Float4"
+        },
+        {
+          "name": "created_at",
+          "ordinal": 5,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "modified_at",
+          "ordinal": 6,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "settled",
+          "ordinal": 7,
+          "type_info": "Bool"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "UuidArray"
+        ]
+      }
+    },
+    "query": "\n            SELECT id, group_id, member_id, description, amount, created_at, modified_at, settled\n                FROM koru_expense\n                WHERE id = ANY($1)\n            "
+  }
+}

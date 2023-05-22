@@ -1,0 +1,2137 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "koru",
+    "description": "An API for managing long-term shared expenses.",
+    "contact": {
+      "name": "Raphael Biland",
+      "email": "raphael.biland@outlook.com"
+    },
+    "license": {
+      "name": "MIT"
+    },
+    "version": "1.4.0"
+  },
+  "paths": {
+    "/admin/groups": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Fetches all groups, only available if user is ADMIN",
+        "description": "Fetches all groups, only available if user is ADMIN\n\nRequires the auth cookie from `/login` to be attached to the request.\n\nExamples:\n```\ncurl -i -b cookie \"http://localhost:8000/admin/groups\"\n```\n",
+        "operationId": "get_all_groups",
+        "responses": {
+          "200": {
+            "description": "List of all groups",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllGroupsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User is not logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "User is not Admin",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ]
+      }
+    },
+    "/admin/users": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Fetches all users, only available if user is ADMIN",
+        "description": "Fetches all users, only available if user is ADMIN\n\nRequires the auth cookie from `/login` to be attached to the request.\n\nExamples:\n```\ncurl -i -b cookie \"http://localhost:8000/admin/users\"\n```\n",
+        "operationId": "get_all_users",
+        "responses": {
+          "200": {
+            "description": "List of all users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllUsersResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User is not logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "User is not Admin",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ]
+      }
+    },
+    "/devices": {
+      "post": {
+        "tags": [
+          "Devices"
+        ],
+        "summary": "Links a device id (Pushy) to the user making the request.",
+        "description": "Links a device id (Pushy) to the user making the request.\n\nRequires the auth cookie from `/login` to be attached to the request.\n\nExample:\n```\ncurl -i -H 'Content-Type: application/json' -d '{\"device\":\"123\"}' -c cookie \"http://localhost:8000/devices\"\n```",
+        "operationId": "register_device",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeviceData"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Device linked to the user.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Devices"
+        ],
+        "summary": "Un-links the device (Pushy) from the user making the request.",
+        "description": "Un-links the device (Pushy) from the user making the request.\n\nRequires the auth cookie from `/login` to be attached to the request.\n\nExample:\n```\ncurl -i -H 'Content-Type: application/json' -c cookie -X DELETE \"http://localhost:8000/devices\"\n```",
+        "operationId": "remove_device",
+        "responses": {
+          "204": {
+            "description": "Device un-linked from the user.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ]
+      }
+    },
+    "/groups": {
+      "get": {
+        "tags": [
+          "Groups"
+        ],
+        "summary": "Fetches the groups of the user making the request.",
+        "description": "Fetches the groups of the user making the request.\n\nRequires the auth cookie from `/login` to be attached to the request.\n\nExamples:\n```\ncurl -i -b cookie \"http://localhost:8000/groups\"\n```\n",
+        "operationId": "get_groups",
+        "responses": {
+          "200": {
+            "description": "List of groups of the user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetGroupsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User is not logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Groups"
+        ],
+        "summary": "Creates a new group with the member making the request as admin.",
+        "description": "Creates a new group with the member making the request as admin.\n\nRequires the auth cookie from `/login` to be attached to the request.\n\nExample:\n```\ncurl -i -H 'Content-Type: application/json' -d '{\"name\":\"my group\",\"color\":{\"red\":0,\"green\":255,\"blue\":0}}' -b cookie \"http://localhost:8000/groups\"\n```\n",
+        "operationId": "create_group",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateGroupPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Group created successfully. Returns the ID of the group created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid payload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User is not logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ]
+      }
+    },
+    "/groups/{group_id}": {
+      "get": {
+        "tags": [
+          "Groups"
+        ],
+        "summary": "Fetches a group, with it's un-settled expenses.",
+        "description": "Fetches a group, with it's un-settled expenses.\n\nThis action can only be performed by a group member.\n\nRequires the auth cookie from `/login` to be attached to the request.\n\nExamples (replace GROUP_ID ith the group UUID):\n```\ncurl -i -b cookie \"http://localhost:8000/groups/GROUP_ID\"\n```\n",
+        "operationId": "get_group",
+        "parameters": [
+          {
+            "name": "group_id",
+            "in": "path",
+            "description": "Group Uuid",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Group details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetGroupResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid group id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User is not logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "User is not allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Group not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Groups"
+        ],
+        "summary": "Deletes a group.",
+        "description": "Deletes a group.\n\nThis action can only be performed by the group administrator.\n\nRequires the auth cookie from `/login` to be attached to the request.\n\nExample (replace GROUP_ID ith the group UUID):\n```\ncurl -i -b cookie -X DELETE \"http://localhost:8000/groups/GROUP_ID\"\n```\n",
+        "operationId": "delete_group",
+        "parameters": [
+          {
+            "name": "group_id",
+            "in": "path",
+            "description": "Group Uuid",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Group deleted successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid group id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User is not logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "User is not allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Group not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ]
+      }
+    },
+    "/groups/{group_id}/expenses": {
+      "get": {
+        "tags": [
+          "Expenses"
+        ],
+        "summary": "Fetches expenses of a group.",
+        "description": "Fetches expenses of a group.\n- If no filters are provided: un-settled expenses.\n- If date filters (`from` and/or `to`) are provided: expenses within the date filters.\n- If `settlement_id` filter is provided: expenses of a given settlement, ignoring any provided date filters.\n\nDate filters should be Unix timestamps.\nSettlement id should be a valid settlement Uuid of the group.\n\nThis action can only be performed by a group member.\n\nRequires the auth cookie from `/login` to be attached to the request.\n\nExamples (replace GROUP_ID ith the group UUID):\n```\ncurl -i -b cookie \"http://localhost:8000/groups/GROUP_ID/expenses\"\ncurl -i -b cookie \"http://localhost:8000/groups/GROUP_ID/expenses?settlement_id=SETTLEMENT_ID\"\ncurl -i -b cookie \"http://localhost:8000/groups/GROUP_ID/expenses?from=1676869911768\"\ncurl -i -b cookie \"http://localhost:8000/groups/GROUP_ID/expenses?to=1676869911768\"\ncurl -i -b cookie \"http://localhost:8000/groups/GROUP_ID/expenses?from=1676869911768&to=1676869945455\"\n```\n",
+        "operationId": "get_expenses",
+        "parameters": [
+          {
+            "name": "group_id",
+            "in": "path",
+            "description": "Group Uuid",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "nullable": true
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "nullable": true
+            }
+          },
+          {
+            "name": "settlement_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of expenses matching the filters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetExpensesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid group id or filters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User is not logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "User is not allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Group or settlement not found (if settlement filter provided)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Expenses"
+        ],
+        "summary": "Creates a new expense for the member making the request, within the provided group id.",
+        "description": "Creates a new expense for the member making the request, within the provided group id.\n\nThis action can only be performed by the member himself.\n\nRequires the auth cookie from `/login` to be attached to the request.\n\nExample (replace GROUP_ID ith the group UUID):\n```\ncurl -i -H 'Content-Type: application/json' -d '{\"description\":\"my expense\", \"amount\": 12}' -b cookie \"http://localhost:8000/groups/GROUP_ID/expenses\"\n```\n",
+        "operationId": "create_expense",
+        "parameters": [
+          {
+            "name": "group_id",
+            "in": "path",
+            "description": "Group Uuid",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateExpensePayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Expense created successfully. Returns the ID of the expense created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid payload or group id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User is not logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "User is not allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Group not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ]
+      }
+    },
+    "/groups/{group_id}/expenses/{expense_id}": {
+      "put": {
+        "tags": [
+          "Expenses"
+        ],
+        "summary": "Updates and expense within the provided group id.",
+        "description": "Updates and expense within the provided group id.\n\nThis action can only be performed by the member himself or the group administrator.\n\nRequires the auth cookie from `/login` to be attached to the request.\n\nExample (replace GROUP_ID with the group UUID and EXPENSE_ID with the expense UUID):\n```\ncurl -i -H 'Content-Type: application/json' -d '{\"description\":\"my expense 2\", \"amount\": 20}' -b cookie -X PUT \"http://localhost:8000/groups/GROUP_ID/expenses/EXPENSE_ID\"\n```\n",
+        "operationId": "update_expense",
+        "parameters": [
+          {
+            "name": "group_id",
+            "in": "path",
+            "description": "Group Uuid",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "expense_id",
+            "in": "path",
+            "description": "Expense Uuid",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateExpensePayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Expense updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid payload, group id or expense id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User is not logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "User is not allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Group or expense not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Expenses"
+        ],
+        "summary": "Deletes an expense.",
+        "description": "Deletes an expense.\n\nThis action can only be performed by the member himself, or the group administrator.\n\nRequires the auth cookie from `/login` to be attached to the request.\n\nExample (replace GROUP_ID ith the group UUID and EXPENSE_ID with the expense Uuid):\n```\ncurl -i -b cookie -X DELETE \"http://localhost:8000/groups/GROUP_ID/expenses/EXPENSE_ID\"\n```\n",
+        "operationId": "delete_expense",
+        "parameters": [
+          {
+            "name": "group_id",
+            "in": "path",
+            "description": "Group Uuid",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "expense_id",
+            "in": "path",
+            "description": "Expense Uuid",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Expense deleted successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid expense or group id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User is not logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "User is not allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Group or expense not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ]
+      }
+    },
+    "/groups/{group_id}/members": {
+      "post": {
+        "tags": [
+          "Groups"
+        ],
+        "summary": "Adds the user making the request to the group whose id is provided, given a valid token from `/groups/{group_id}/token`.",
+        "description": "Adds the user making the request to the group whose id is provided, given a valid token from `/groups/{group_id}/token`.\n\nThis action can only be performed by the member himself.\n\nRequires the auth cookie from `/login` to be attached to the request.\n\nExample (replace GROUP_ID ith the group UUID):\n```\ncurl -i -H 'Content-Type: application/json' -d '{\"token\":\"TOKEN\",\"color\":{\"red\":0,\"green\":255,\"blue\":0}}' -b cookie2 \"http://localhost:8000/groups/GROUP_ID/members\"\n```\n",
+        "operationId": "join_group",
+        "parameters": [
+          {
+            "name": "group_id",
+            "in": "path",
+            "description": "Group Uuid",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JoinGroupPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Member joined successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid payload or group id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User is not logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Token is invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Group not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "User is already a member",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "Groups"
+        ],
+        "summary": "Changes the color of the member making the request, within the provided group id.",
+        "description": "Changes the color of the member making the request, within the provided group id.\n\nThis action can only be performed by the member himself.\n\nRequires the auth cookie from `/login` to be attached to the request.\n\nExample (replace GROUP_ID ith the group UUID):\n```\ncurl -i -H 'Content-Type: application/json' -d '{\"color\":{\"red\":255,\"green\":255,\"blue\":255}}' -b cookie -X PATCH \"http://localhost:8000/groups/GROUP_ID/members\"\n```\n",
+        "operationId": "change_color",
+        "parameters": [
+          {
+            "name": "group_id",
+            "in": "path",
+            "description": "Group Uuid",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangeColorPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Color changed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid payload or group id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User is not logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "User is not allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Group not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ]
+      }
+    },
+    "/groups/{group_id}/settlements": {
+      "get": {
+        "tags": [
+          "Settlements"
+        ],
+        "summary": "Fetches all settlements of the group.",
+        "description": "Fetches all settlements of the group.\n\nThis action can only be performed by a group member.\n\nRequires the auth cookie from `/login` to be attached to the request.\n\nExamples (replace GROUP_ID ith the group UUID):\n```\ncurl -i -b cookie \"http://localhost:8000/groups/GROUP_ID/settlements\"\n```\n",
+        "operationId": "get_settlements",
+        "parameters": [
+          {
+            "name": "group_id",
+            "in": "path",
+            "description": "Group Uuid",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of settlements of the group",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetSettlementsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid group id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User is not logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "User is not allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Group not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Settlements"
+        ],
+        "summary": "Settles the current expenses and returns the settlement summary.",
+        "description": "Settles the current expenses and returns the settlement summary.\n\nThis action can only be performed by the group administrator.\n\nRequires the auth cookie from `/login` to be attached to the request.\n\nExample (replace GROUP_ID ith the group UUID):\n```\ncurl -i -H 'Content-Type: application/json' -b cookie -X POST \"http://localhost:8000/groups/GROUP_ID/settlements\"\n```\n",
+        "operationId": "settle",
+        "parameters": [
+          {
+            "name": "group_id",
+            "in": "path",
+            "description": "Group Uuid",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Settlement computed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettlementResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid group id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User is not logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "User is not allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Group not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ]
+      }
+    },
+    "/health_check": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Health check",
+        "description": "Health check\n\nExamples:\n```\ncurl -i \"http://localhost:8000/health_check\"\n```\n",
+        "operationId": "health_check",
+        "responses": {
+          "200": {
+            "description": "Service health status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Logs in the user given valid credentials.",
+        "description": "Logs in the user given valid credentials.\n\nIt will return a `Set-Cookie` header, that should be used in next authenticated requests\n\nExample:\n```\ncurl -i -H 'Content-Type: application/json' -d '{\"password\":\"123\",\"email\":\"r@r1.com\"}' -c cookie \"http://localhost:8000/login\"\n```",
+        "operationId": "login",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful login",
+            "headers": {
+              "Set-Cookie": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Auth cookie"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation errors in login request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/logout": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Logs out the user making the request.",
+        "description": "Logs out the user making the request.\n\nRequires the auth cookie from `/login` to be attached to the request.\n\nExample:\n```\ncurl -i -H 'Content-Type: application/json' -c cookie -X POST \"http://localhost:8000/logout\"\n```",
+        "operationId": "logout",
+        "responses": {
+          "204": {
+            "description": "Successful logout"
+          },
+          "401": {
+            "description": "User is not logged in"
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ]
+      }
+    },
+    "/register": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Registers a new user.",
+        "description": "Registers a new user.\n\nExample:\n```\ncurl -i -H 'Content-Type: application/json' -d '{\"password\":\"123\",\"email\":\"r@r1.com\",\"name\":\"Bob\"}' -c cookie \"http://localhost:8000/register\"\n```",
+        "operationId": "register",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful registration",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation errors in registration request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AllGroupsResponse": {
+        "type": "object",
+        "required": [
+          "groups"
+        ],
+        "properties": {
+          "groups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GroupDto"
+            }
+          }
+        }
+      },
+      "AllUsersResponse": {
+        "type": "object",
+        "required": [
+          "users"
+        ],
+        "properties": {
+          "users": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DetailedUserDto"
+            }
+          }
+        }
+      },
+      "ChangeColorPayload": {
+        "type": "object",
+        "required": [
+          "color"
+        ],
+        "properties": {
+          "color": {
+            "$ref": "#/components/schemas/ColorDto"
+          }
+        }
+      },
+      "ColorDto": {
+        "type": "object",
+        "required": [
+          "red",
+          "green",
+          "blue"
+        ],
+        "properties": {
+          "blue": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0.0
+          },
+          "green": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0.0
+          },
+          "red": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0.0
+          }
+        }
+      },
+      "CreateExpensePayload": {
+        "type": "object",
+        "required": [
+          "description",
+          "amount"
+        ],
+        "properties": {
+          "amount": {
+            "type": "number",
+            "format": "float"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "CreateGroupPayload": {
+        "type": "object",
+        "required": [
+          "name",
+          "color"
+        ],
+        "properties": {
+          "color": {
+            "$ref": "#/components/schemas/ColorDto"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "DetailedGroupDto": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "members",
+          "expenses"
+        ],
+        "properties": {
+          "expenses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExpenseDto"
+            }
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "members": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MemberDto"
+            }
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "DetailedUserDto": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "email",
+          "role",
+          "created_at"
+        ],
+        "properties": {
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "email": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          }
+        }
+      },
+      "DeviceData": {
+        "type": "object",
+        "required": [
+          "device"
+        ],
+        "properties": {
+          "device": {
+            "type": "string"
+          }
+        }
+      },
+      "ErrorData": {
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "properties": {
+          "error": {
+            "type": "string"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "success",
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/ErrorData"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ExpenseDto": {
+        "type": "object",
+        "required": [
+          "id",
+          "description",
+          "amount",
+          "user",
+          "date"
+        ],
+        "properties": {
+          "amount": {
+            "type": "number",
+            "format": "float"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "description": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "user": {
+            "$ref": "#/components/schemas/MemberDto"
+          }
+        }
+      },
+      "ExpensesResponse": {
+        "type": "object",
+        "required": [
+          "expenses"
+        ],
+        "properties": {
+          "expenses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExpenseDto"
+            }
+          }
+        }
+      },
+      "GenerateTokenResponse": {
+        "type": "object",
+        "required": [
+          "success",
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/GroupTokenResponse"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "GetAllGroupsResponse": {
+        "type": "object",
+        "required": [
+          "success",
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/AllGroupsResponse"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "GetAllUsersResponse": {
+        "type": "object",
+        "required": [
+          "success",
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/AllUsersResponse"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "GetExpensesResponse": {
+        "type": "object",
+        "required": [
+          "success",
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/ExpensesResponse"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "GetGroupResponse": {
+        "type": "object",
+        "required": [
+          "success",
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/GroupResponse"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "GetGroupsResponse": {
+        "type": "object",
+        "required": [
+          "success",
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/GroupsResponse"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "GetSettlementsResponse": {
+        "type": "object",
+        "required": [
+          "success",
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/SettlementsResponse"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "GroupDto": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "members"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "members": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MemberDto"
+            }
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "GroupResponse": {
+        "type": "object",
+        "required": [
+          "group"
+        ],
+        "properties": {
+          "group": {
+            "$ref": "#/components/schemas/DetailedGroupDto"
+          }
+        }
+      },
+      "GroupTokenResponse": {
+        "type": "object",
+        "required": [
+          "token"
+        ],
+        "properties": {
+          "token": {
+            "type": "string"
+          }
+        }
+      },
+      "GroupsResponse": {
+        "type": "object",
+        "required": [
+          "groups"
+        ],
+        "properties": {
+          "groups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GroupDto"
+            }
+          }
+        }
+      },
+      "IdData": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "IdResponse": {
+        "type": "object",
+        "required": [
+          "success",
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/IdData"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "JoinGroupPayload": {
+        "type": "object",
+        "required": [
+          "token",
+          "color"
+        ],
+        "properties": {
+          "color": {
+            "$ref": "#/components/schemas/ColorDto"
+          },
+          "token": {
+            "type": "string"
+          }
+        }
+      },
+      "LoginPayload": {
+        "type": "object",
+        "required": [
+          "email"
+        ],
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "MemberDto": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "email",
+          "is_admin",
+          "color",
+          "joined_at"
+        ],
+        "properties": {
+          "color": {
+            "$ref": "#/components/schemas/ColorDto"
+          },
+          "email": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "is_admin": {
+            "type": "boolean"
+          },
+          "joined_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "MessageData": {
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "MessageResponse": {
+        "type": "object",
+        "required": [
+          "success",
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/MessageData"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "RegisterPayload": {
+        "type": "object",
+        "required": [
+          "name",
+          "email"
+        ],
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "SettlementDto": {
+        "type": "object",
+        "required": [
+          "id",
+          "end_date",
+          "transactions"
+        ],
+        "properties": {
+          "end_date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "start_date": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "transactions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TransactionDto"
+            }
+          }
+        }
+      },
+      "SettlementResponse": {
+        "type": "object",
+        "required": [
+          "success",
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/SettlementDto"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "SettlementsResponse": {
+        "type": "object",
+        "required": [
+          "settlements"
+        ],
+        "properties": {
+          "settlements": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SettlementDto"
+            }
+          }
+        }
+      },
+      "TransactionDto": {
+        "type": "object",
+        "required": [
+          "from",
+          "to",
+          "amount"
+        ],
+        "properties": {
+          "amount": {
+            "type": "number",
+            "format": "float"
+          },
+          "from": {
+            "$ref": "#/components/schemas/MemberDto"
+          },
+          "to": {
+            "$ref": "#/components/schemas/MemberDto"
+          }
+        }
+      },
+      "UpdateExpensePayload": {
+        "type": "object",
+        "required": [
+          "description",
+          "amount"
+        ],
+        "properties": {
+          "amount": {
+            "type": "number",
+            "format": "float"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "UserDto": {
+        "type": "object",
+        "required": [
+          "id",
+          "name"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "cookieAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "id"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Authentication",
+      "description": "User & auth endpoints."
+    },
+    {
+      "name": "Groups",
+      "description": "Group management."
+    },
+    {
+      "name": "Expenses",
+      "description": "Expense management."
+    },
+    {
+      "name": "Settlements",
+      "description": "Settlement management."
+    },
+    {
+      "name": "Admin",
+      "description": "Admin endpoints."
+    },
+    {
+      "name": "Devices",
+      "description": "Devices (Pushy) management."
+    },
+    {
+      "name": "Health",
+      "description": "Health check endpoint."
+    }
+  ]
+}

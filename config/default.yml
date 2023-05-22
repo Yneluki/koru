@@ -1,0 +1,13 @@
+api:
+  port: 8000
+  session:
+    hmac: Very_Long-SecRet!00##123456789-Very_Long-SecRet!00##123456789-Very_Long-SecRet!00##123456789
+    duration: 20
+application:
+  token:
+    jwt:
+      secret: dEmOSecreT!
+  notification:
+    pushy:
+      url: localhost
+      token: YOUR_TOKEN

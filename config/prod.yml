@@ -1,0 +1,23 @@
+api:
+  host: 0.0.0.0
+  session:
+    store:
+      redis:
+        host: redis
+        port: 6379
+database:
+  postgres:
+    host: postgres
+    port: 5432
+    name: koru
+event_bus:
+  redis:
+    host: redis
+    port: 6379
+    event_channel: koru_events
+application:
+  notification:
+    pushy:
+      url: https://api.pushy.me
+  auth:
+    internal:

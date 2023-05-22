@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+echo "Checking format"
+cargo fmt -- --check

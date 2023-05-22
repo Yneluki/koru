@@ -1,0 +1,69 @@
+[env]
+RUST_BACKTRACE = 0
+
+[tasks.clippy]
+command = "cargo"
+args = ["clippy", "--features", "production", "--no-default-features", "--", "-D", "warnings"]
+dependencies = ["setup-infra"]
+
+[tasks.unit-test]
+command = "cargo"
+args = ["nextest", "run"]
+dependencies = ["format", "clippy"]
+
+[tasks.integration-test]
+env = { "KORU_ENV" = "integration" }
+command = "cargo"
+args = ["nextest", "run", "--features", "production", "--no-default-features"]
+dependencies = [
+    "setup-infra",
+    "format",
+    "clippy"
+]
+
+[tasks.sqlx-offline]
+command = "cargo"
+args = [ "sqlx", "prepare", "--merged", "--", "--all-targets", "--features", "production", "--no-default-features" ]
+dependencies = ["setup-infra"]
+
+[tasks.openapi]
+command = "cargo"
+args = ["run", "--bin", "gen-openapi"]
+
+[tasks.git-hooks]
+script = { file = "scripts/git-hooks/git-hooks.sh" }
+
+[tasks.start-infra]
+script = { file = "scripts/init_db.sh" }
+
+[tasks.stop-infra]
+script = { file = "scripts/stop_db.sh" }
+
+[tasks.setup-infra]
+condition = { fail_message = "Infra already running." }
+condition_script = [
+    '''
+    if [[ $(docker ps -q --filter name=koru_test) ]]; then
+        exit 1;
+    else
+        exit 0;
+    fi
+    '''
+]
+run_task = { name = ["stop-infra", "start-infra"] }
+
+[tasks.all-test]
+dependencies = [
+    "format",
+    "clippy",
+    "unit-test",
+    "integration-test"
+]
+
+[tasks.default]
+clear = true
+dependencies = [
+    "git-hooks",
+    "all-test",
+    "openapi"
+]

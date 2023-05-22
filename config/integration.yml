@@ -1,0 +1,22 @@
+api:
+  host: localhost
+  session:
+    store:
+      redis:
+        host: localhost
+        port: 6379
+database:
+  postgres:
+    host: localhost
+    port: 5432
+    username: postgres
+    password: password
+    name: koru
+event_bus:
+  redis:
+    event_channel: koru_events
+    host: localhost
+    port: 6379
+application:
+  auth:
+    internal:

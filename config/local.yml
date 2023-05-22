@@ -1,0 +1,12 @@
+api:
+  host: localhost
+  session:
+    store:
+      memory:
+database:
+  memory:
+event_bus:
+  memory:
+application:
+  auth:
+    internal:

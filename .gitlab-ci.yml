@@ -1,0 +1,203 @@
+workflow:
+  rules:
+    - when: always
+
+stages:
+    - static_analysis
+    - unit_test
+    - integration_test
+    - build_docker_image
+    - deploy
+    - verify
+
+services:
+  - postgres:latest
+  - redis:latest
+
+variables:
+  POSTGRES_DB: koru
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: password
+  POSTGRES_HOST_AUTH_METHOD: trust
+  APP_HOST: $APP_HOST
+  APP_DIR: $APP_DIR
+  REGISTRY: $REGISTRY
+  TEST_IMAGE: rust:full-1.69.0
+  DEV_URL: $DEV_URL
+  PROD_URL: $PROD_URL
+
+static_analysis:
+  image: $REGISTRY/$TEST_IMAGE
+  stage: static_analysis
+  tags:
+    - docker
+  variables:
+    SQLX_OFFLINE: 'true'
+  script:
+    - cargo fmt -- --check
+    - cargo clippy --features production --no-default-features -- -D warnings
+    - cargo run --bin gen-openapi
+  artifacts:
+    paths:
+      - openapi/koru_openapi.json
+
+test:
+  image: $REGISTRY/$TEST_IMAGE
+  stage: unit_test
+  tags:
+    - docker
+  variables:
+    SQLX_OFFLINE: 'true'
+    KORU__API__HOST: '127.0.0.1'
+  script:
+    - cargo nextest run
+
+integration_test:
+  image: $REGISTRY/$TEST_IMAGE
+  stage: integration_test
+  tags:
+    - docker
+  variables:
+    SQLX_OFFLINE: 'true'
+    KORU__API__HOST: '127.0.0.1'
+    KORU__DATABASE__POSTGRES__HOST: 'postgres'
+    KORU__API__SESSION__STORE__REDIS__HOST: 'redis'
+    KORU__EVENT_BUS__REDIS__HOST: 'redis'
+  script:
+    - KORU_ENV=integration cargo nextest run --features production --no-default-features
+
+.docker_image:
+  stage: build_docker_image
+  tags:
+    - shell
+  variables:
+    IMAGE_VERSION: ''
+    TRAILING_VERSION: ''
+    KORU_FEATURES: ''
+  before_script:
+    - echo "${DOCKER_AUTH_CONFIG}" > ~/.docker/config.json
+    - docker login $REGISTRY
+  script:
+    - VERSION=$(awk -F ' = ' '$1 ~ /version/ { gsub(/[\"]/, "", $2); printf("%s",$2) }' Cargo.toml)
+    - echo $VERSION
+    - docker build --build-arg KORU_FEATURES=$KORU_FEATURES -t $REGISTRY/koru:$IMAGE_VERSION .
+    - docker tag $REGISTRY/koru:$IMAGE_VERSION $REGISTRY/koru:$VERSION$TRAILING_VERSION
+    - docker push $REGISTRY/koru:$IMAGE_VERSION
+    - docker push $REGISTRY/koru:$VERSION$TRAILING_VERSION
+  after_script:
+    - rm -rf ~/.docker/config.json
+
+.deploy:
+  stage: deploy
+  tags:
+    - shell
+  variables:
+    PROJECT_NAME: ''
+    DIRECTORY: ''
+    VERSION: ''
+    APP_PORT: ''
+    DB_PORT: ''
+    DB_USER: ''
+    DB_PASS: ''
+    JWT: ''
+    HMAC: ''
+    PUSHY: ''
+  script:
+    - scp -r docker-compose.yaml migrations $APP_HOST:$APP_DIR/$DIRECTORY/
+    - ssh $APP_HOST "
+      cd $APP_DIR/$DIRECTORY &&
+      export COMPOSE_PROJECT_NAME=$PROJECT_NAME &&
+      export KORU_VERSION=$VERSION &&
+      export KORU_JWT=$JWT &&
+      export KORU_HMAC=$HMAC &&
+      export PUSHY_TOKEN=$PUSHY &&
+      export KORU_PORT=$APP_PORT &&
+      export PG_USER=$DB_USER &&
+      export PG_PASS=$DB_PASS &&
+      export PG_PORT=$DB_PORT &&
+      echo '${DOCKER_AUTH_CONFIG}' > ~/.docker/config.json &&
+      docker login $REGISTRY &&
+      docker-compose down &&
+      docker-compose pull &&
+      docker-compose up -d &&
+      rm -rf ~/.docker/config.json &&
+      DATABASE_URL=postgres://$DB_USER:$DB_PASS@localhost:$DB_PORT/koru ~/.cargo/bin/sqlx migrate run "
+
+.verify:
+  stage: verify
+  tags:
+    - shell
+  variables:
+    URL: ''
+  script:
+    - docker run --rm curlimages/curl:latest --fail-with-body $URL
+
+build_docker_dev_image:
+  extends: .docker_image
+  variables:
+    IMAGE_VERSION: 'dev'
+    TRAILING_VERSION: '-dev'
+    KORU_FEATURES: 'development'
+
+build_docker_prod_image:
+  extends: .docker_image
+  rules:
+    - if: $CI_COMMIT_BRANCH != "master"
+      when: never
+    - when: always
+  variables:
+    IMAGE_VERSION: 'stable'
+    TRAILING_VERSION: ''
+    KORU_FEATURES: 'production'
+
+deploy_dev:
+  extends: .deploy
+  variables:
+    APP_PORT: 9001
+    DB_PORT: 5435
+    PROJECT_NAME: 'koru-dev'
+    DIRECTORY: 'dev'
+    VERSION: 'dev'
+    DB_USER: $PG_TEST_USER
+    DB_PASS: $PG_TEST_PASS
+    JWT: $KORU_TEST_JWT
+    HMAC: $KORU_TEST_HMAC
+    PUSHY: $PUSHY_TEST_TOKEN
+  environment:
+    name: dev
+    url: $DEV_URL
+
+deploy_prod:
+  extends: .deploy
+  rules:
+    - if: $CI_COMMIT_BRANCH != "master"
+      when: never
+    - when: always
+  variables:
+    APP_PORT: 9000
+    DB_PORT: 5434
+    PROJECT_NAME: 'koru-prod'
+    DIRECTORY: 'prod'
+    VERSION: 'stable'
+    DB_USER: $PG_USER
+    DB_PASS: $PG_PASS
+    JWT: $KORU_JWT
+    HMAC: $KORU_HMAC
+    PUSHY: $PUSHY_TOKEN
+  environment:
+    name: prod
+    url: $PROD_URL
+
+verify_dev:
+  extends: .verify
+  variables:
+    URL: $DEV_URL
+
+verify_prod:
+  extends: .verify
+  rules:
+    - if: $CI_COMMIT_BRANCH != "master"
+      when: never
+    - when: always
+  variables:
+    URL: $PROD_URL

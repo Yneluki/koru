@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  app:
+    image: ${REGISTRY}/koru:${KORU_VERSION}
+    restart: always
+    ports:
+      - "${KORU_PORT}:8000"
+    environment:
+      KORU__APPLICATION__TOKEN__JWT__SECRET: ${KORU_JWT}
+      KORU__API__SESSION__HMAC: ${KORU_HMAC}
+      KORU__API__SESSION__STORE__REDIS__HOST: 'redis'
+      KORU__DATABASE__POSTGRES__HOST: 'db'
+      KORU__DATABASE__POSTGRES__USERNAME: ${PG_USER}
+      KORU__DATABASE__POSTGRES__PASSWORD: ${PG_PASS}
+      KORU__EVENT_BUS__REDIS__HOST: 'redis'
+      KORU__APPLICATION__NOTIFICATION__PUSHY__TOKEN: ${PUSHY_TOKEN}
+    depends_on:
+      - db
+      - redis
+
+  db:
+    image: postgres:latest
+    restart: always
+    ports:
+      - "${PG_PORT}:5432"
+    volumes:
+      - koru-db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASS}
+      POSTGRES_DB: koru
+
+  redis:
+    image: redis:latest
+    restart: always
+
+volumes:
+  koru-db:

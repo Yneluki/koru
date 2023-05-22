@@ -1,0 +1,76 @@
+[package]
+name = "koru"
+description = "An API for managing long-term shared expenses."
+version = "1.4.0"
+edition = "2021"
+license = "MIT"
+authors = ["Raphael Biland <raphael.biland@outlook.com>"]
+
+[lib]
+path = "src/lib.rs"
+doctest = false
+
+[[bin]]
+path = "src/main.rs"
+name = "koru"
+
+[[bin]]
+path = "openapi/openapi.rs"
+name = "gen-openapi"
+required-features = ["openapi"]
+
+[features]
+default = ["notification", "jwt", "openapi"]
+production = ["postgres", "redis", "notification", "jwt"]
+development = ["postgres", "redis", "notification", "jwt", "openapi"]
+postgres = ["dep:sqlx"]
+redis = ["redis-bus", "redis-session"]
+redis-bus = ["dep:redis"]
+redis-session = ["actix-session/redis-rs-tls-session"]
+notification = ["pushy"]
+pushy = ["dep:reqwest"]
+jwt = ["dep:jsonwebtoken"]
+openapi = ["dep:utoipa", "dep:utoipa-swagger-ui"]
+
+[dependencies]
+actix-web = "4"
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+anyhow = "1.0"
+thiserror = "1.0"
+uuid = { version = "1", features = ["serde", "v4"] }
+config = { version = "0.13", default-features = false, features = ["yaml"] }
+sqlx = { version = "0.6", default-features = false, features = [ "runtime-tokio-native-tls", "macros", "postgres", "uuid", "chrono", "migrate", "offline", "json"], optional = true }
+secrecy = { version = "0.8", features = ["serde"] }
+log = "0.4"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["registry", "env-filter"] }
+tracing-bunyan-formatter = "0.3"
+tracing-log = "0.1"
+tracing-actix-web = "0.7"
+chrono = { version = "0.4", default-features = false, features = ["serde", "clock", "std"] }
+argon2 = { version = "0.4", features = ["std"] }
+rand = { version = "0.8", features = ["std_rng"] }
+async-trait = "0.1"
+jsonwebtoken = { version = "8", optional = true }
+futures = "0.3"
+futures-util = "0.3"
+itertools = "0.10"
+actix-session = { version = "0.7" }
+actix-web-lab = "0.18"
+float-cmp = "0.9"
+redis = { version="0.22", features = ["tokio-comp"], optional = true }
+reqwest = { version = "0.11", default-features = false, features = ["cookies", "json", "native-tls"], optional = true}
+utoipa = { version = "3", features = ["uuid", "chrono"], optional = true }
+utoipa-swagger-ui = { version = "3", features = ["actix-web"], optional = true }
+
+[dev-dependencies]
+once_cell = "1"
+claim = "0.5"
+quickcheck = "1"
+quickcheck_macros = "1"
+fake = "2"
+test-context = "0.1"
+wiremock = "0.5"
+reqwest = { version = "0.11", default-features = false, features = ["cookies", "json", "native-tls"] }
